@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id  Int @id @default(autoincrement())
+  name  String
+  username String
+  email String
+  password  String
+  customerUsers CustomerUser[]
+  createdAt DateTime @default(now())
+}
+
+model CustomerUser {
+  id  Int @id @default(autoincrement())
+  name String
+  adminUserId Int
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id])
+  subscriptionId Int @unique
+  subscription Subscription @relation(fields:[subscriptionId], references: [id])
+}
+
+model Subscription {
+  id  Int @id @default(autoincrement())
+  startDate DateTime @default(now())
+  endDate DateTime
+  monthsPaid Int @default(1)
+  customerUser CustomerUser?
+  status Status @default(CURRENT)
+}
+
+enum Status {
+  CURRENT
+  NOT_CURRENT
+}
