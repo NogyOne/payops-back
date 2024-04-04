@@ -3,8 +3,6 @@ import { addSubscription, updateSubscription, getSubscriptionsWithUsers } from '
 
 const routes = Router()
 
-routes.post('/subscriptions', addSubscription)
-
 routes.put('/subscriptions/:id/:monthsPaid', updateSubscription)
 
 routes.get('/subscriptions', getSubscriptionsWithUsers)
