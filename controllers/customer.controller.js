@@ -3,7 +3,11 @@ import { addSubscription } from './subscription.controller.js'
 
 export const getCustomers = async (req, res) => {
     try {
-        const customers = await prisma.customerUser.findMany()
+        const customers = await prisma.customerUser.findMany({
+            include: {
+                subscription: true
+            }
+        })
         res.json(customers)
     } catch (error) {
         res.status(500).json({ message: error.message })
@@ -53,6 +57,9 @@ export const getCustomerById = async (req, res) => {
             where: {
                 id: parseInt(id)
             },
+            include: {
+                subscription: true
+            }
         })
         res.json(customer)
     } catch (error) {
