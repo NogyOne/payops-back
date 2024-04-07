@@ -15,19 +15,19 @@ export const getCustomers = async (req, res) => {
 }
 
 export const addCustomer = async (req, res) => {
-    const { adminUser, name, monthsPaid } = req.body
-    if (!adminUser || !name ) {
+    const { adminUser, name, monthsPaid, email } = req.body
+    if (!adminUser || !name || !email) {
         return res.status(400).json('Please provide all requiered fields')
     }
     try {
         let subscription
-        if (!monthsPaid){
+        if (!monthsPaid) {
             subscription = await addSubscription(1)
         }
-        else{
+        else {
             subscription = await addSubscription(monthsPaid)
         }
-            
+
         if (!subscription) {
             return res.status(500).json({ message: 'Failed to create subscription' })
         }
@@ -35,6 +35,7 @@ export const addCustomer = async (req, res) => {
         const newCustomer = await prisma.customerUser.create({
             data: {
                 name,
+                email,
                 adminUserId: adminUser,
                 subscriptionId: subscription.id
             }
@@ -47,11 +48,11 @@ export const addCustomer = async (req, res) => {
 
 export const getCustomerById = async (req, res) => {
     const { id } = req.params
-    
-    if( !id ){
+
+    if (!id) {
         return res.status(400).json('Please provide an Id')
     }
-    
+
     try {
         const customer = await prisma.customerUser.findFirst({
             where: {
@@ -64,13 +65,13 @@ export const getCustomerById = async (req, res) => {
         res.json(customer)
     } catch (error) {
         res.status(500).json({ message: error.message })
-    }   
+    }
 }
 
 export const getCustomersByName = async (req, res) => {
-    const { name} = req.params
+    const { name } = req.params
 
-    if( !name ){
+    if (!name) {
         return res.status(400).json('Please provide a name')
     }
 
@@ -82,6 +83,31 @@ export const getCustomersByName = async (req, res) => {
         })
         res.json(customer)
     } catch (error) {
-        res.status(500).json({ message: error.message }) 
+        res.status(500).json({ message: error.message })
     }
+}
+
+export const updateCustomer = async (req, res) => {
+    const { id } = req.params
+    const { name, email} = req.body
+
+    if (!id) {
+        return res.status(400).json('Please select a customer')
+    }
+
+    try {
+        const updatedCustomer = await prisma.customerUser.update({
+            where: {
+                id: +id
+            },
+            data:{
+                name,
+                email,
+            }
+        })
+        res.json(updatedCustomer)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+
 }
