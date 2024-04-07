@@ -21,14 +21,32 @@ export const addSubscription = async (monthsPaid) => {
     }
 }
 
-export const getSubscriptionsWithUsers = async (req, res) => {
+export const getSubscriptions = async (req, res) => {
     try {
-        const subscriptions = await prisma.subscription.findMany({
-            include: {
-                customerUser: true
+        const subscriptions = await prisma.subscription.findMany()
+        res.json(subscriptions)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
+export const updateSubStatus = async (req, res) => {
+    const { id } = req.params
+
+    if(!id){
+        return res.status(404).json({message: 'Please provide a Subscription to update its status.'})
+    }
+
+    try {
+        const updatedSubStatus = await prisma.subscription.update({
+            where: {
+                id: +id
+            },
+            data:{
+                status: 'EXPIRED'
             }
         })
-        res.json(subscriptions)
+        res.json(updatedSubStatus)
     } catch (error) {
         res.status(500).json({message: error.message})
     }
@@ -41,7 +59,7 @@ export const updateSubscription = async (req, res) => {
         return res.status(400).json({message: 'Please provide all requiered fields'})
     }
 
-    try {
+    try {        
         const startDate = new Date()
         startDate.setHours(0, 0, 0, 0)
         
@@ -55,7 +73,8 @@ export const updateSubscription = async (req, res) => {
             data: {
                 startDate,
                 endDate,
-                monthsPaid: +monthsPaid
+                monthsPaid: +monthsPaid,
+                status: 'CURRENT'
             }
         })
         res.json(updatedSubscription)

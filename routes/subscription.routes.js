@@ -1,10 +1,12 @@
 import { Router } from 'express'
-import { addSubscription, updateSubscription, getSubscriptionsWithUsers } from '../controllers/subscription.controller.js' 
+import { addSubscription, updateSubscription, getSubscriptions, updateSubStatus } from '../controllers/subscription.controller.js' 
 
 const routes = Router()
 
 routes.put('/subscriptions/:id/:monthsPaid', updateSubscription)
 
-routes.get('/subscriptions', getSubscriptionsWithUsers)
+routes.patch('/subscriptions/:id', updateSubStatus)
+
+routes.get('/subscriptions', getSubscriptions)
 
 export default routes
