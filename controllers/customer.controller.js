@@ -17,7 +17,7 @@ export const getCustomers = async (req, res) => {
 export const addCustomer = async (req, res) => {
     const { adminUser, name, monthsPaid, email } = req.body
     if (!adminUser || !name || !email) {
-        return res.status(400).json('Please provide all requiered fields')
+        return res.status(401).json('Please provide all requiered fields')
     }
     try {
         let subscription
@@ -50,7 +50,7 @@ export const getCustomerById = async (req, res) => {
     const { id } = req.params
 
     if (!id) {
-        return res.status(400).json('Please provide an Id')
+        return res.status(401).json('Please provide an Id')
     }
 
     try {
@@ -72,7 +72,7 @@ export const getCustomersByName = async (req, res) => {
     const { name } = req.params
 
     if (!name) {
-        return res.status(400).json('Please provide a name')
+        return res.status(401).json('Please provide a name')
     }
 
     try {
@@ -86,13 +86,12 @@ export const getCustomersByName = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
-
 export const updateCustomer = async (req, res) => {
     const { id } = req.params
     const { name, email} = req.body
 
     if (!id) {
-        return res.status(400).json('Please select a customer')
+        return res.status(401).json('Please select a customer.')
     }
 
     try {
@@ -109,5 +108,23 @@ export const updateCustomer = async (req, res) => {
     } catch (error) {
         res.status(500).json({message: error.message})
     }
+}
 
+export const deleteCustomer = async (req, res) => {
+    const { id } = req.params
+
+    if(!id){
+        return res.status(404).json('Please select a customer.')
+    }
+
+    try {
+        const deletedCustomer = await prisma.customerUser.delete({
+            where: {
+                id: +id
+            },            
+        })
+        res.json(deletedCustomer)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
 }
