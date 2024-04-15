@@ -34,7 +34,7 @@ export const updateSubStatus = async (req, res) => {
     const { id } = req.params
 
     if(!id){
-        return res.status(404).json({message: 'Please provide a Subscription to update its status.'})
+        return res.status(401).json({message: 'Please provide a Subscription to update its status.'})
     }
 
     try {
@@ -56,7 +56,7 @@ export const updateSubscription = async (req, res) => {
     const { id, monthsPaid } = req.params
 
     if(!id){
-        return res.status(400).json({message: 'Please provide all requiered fields'})
+        return res.status(401).json({message: 'Please provide all requiered fields'})
     }
 
     try {        
@@ -78,6 +78,28 @@ export const updateSubscription = async (req, res) => {
             }
         })
         res.json(updatedSubscription)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
+export const deleteSubscription = async (req, res) => {
+    const { id } = req.params
+
+    if(!id){
+        return res.status(404).json('Please select a customer.')
+    }
+
+    try {
+        const deletedSub = await prisma.subscription.delete({
+            where: {
+                id: +id
+            },
+            include: {
+                customerUser: true
+            }            
+        })
+        res.json(deletedSub)
     } catch (error) {
         res.status(500).json({message: error.message})
     }
