@@ -1,9 +1,15 @@
 import { prisma } from '../utils/dbConnect.js'
 import { addSubscription } from './subscription.controller.js'
 
+const PAGE_SIZE = 6
+
 export const getCustomers = async (req, res) => {
+    const { page } = req.params;
+
     try {
         const customers = await prisma.customerUser.findMany({
+            take: PAGE_SIZE,
+            skip: (page - 1) * PAGE_SIZE,
             include: {
                 subscription: true
             }
@@ -88,7 +94,7 @@ export const getCustomersByName = async (req, res) => {
 }
 export const updateCustomer = async (req, res) => {
     const { id } = req.params
-    const { name, email} = req.body
+    const { name, email } = req.body
 
     if (!id) {
         return res.status(401).json('Please select a customer.')
@@ -99,21 +105,21 @@ export const updateCustomer = async (req, res) => {
             where: {
                 id: +id
             },
-            data:{
+            data: {
                 name,
                 email,
             }
         })
         res.json(updatedCustomer)
     } catch (error) {
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 }
 
 export const deleteCustomer = async (req, res) => {
     const { id } = req.params
 
-    if(!id){
+    if (!id) {
         return res.status(404).json('Please select a customer.')
     }
 
@@ -121,10 +127,10 @@ export const deleteCustomer = async (req, res) => {
         const deletedCustomer = await prisma.customerUser.delete({
             where: {
                 id: +id
-            },            
+            },
         })
         res.json(deletedCustomer)
     } catch (error) {
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 }

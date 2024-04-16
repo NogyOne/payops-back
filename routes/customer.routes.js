@@ -5,7 +5,7 @@ import { addCustomer, getCustomers, getCustomerById, getCustomersByName, deleteC
 const routes = Router()
 
 //Get all customers
-routes.get('/customers', getCustomers)
+routes.get('/customers/page/:page', getCustomers)
 routes.get('/customers/:id', getCustomerById)
 routes.get('/customers/name/:name', getCustomersByName)
 
