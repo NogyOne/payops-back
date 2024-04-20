@@ -4,8 +4,8 @@ import { addSubscription } from './subscription.controller.js'
 const PAGE_SIZE = 6
 
 export const getCustomers = async (req, res) => {
-    const { page } = req.params;
-
+    const {page} = req.params
+    
     try {
         const customers = await prisma.customerUser.findMany({
             take: PAGE_SIZE,
@@ -14,6 +14,60 @@ export const getCustomers = async (req, res) => {
                 subscription: true
             }
         })
+        res.json(customers)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+export const getCustomersForFilters = async (page) => {
+    try {
+        const customers = await prisma.customerUser.findMany({
+            take: PAGE_SIZE,
+            skip: (page - 1) * PAGE_SIZE,
+            include: {
+                subscription: true
+            }
+        })
+        return customers
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
+
+export const getCustomersByFilters = async (req, res) => {
+    let { page, plainText, status } = req.params
+    status = String(status).toUpperCase().trim()
+    //Date filter could be wait to an update
+    try {
+        //This conditional must to be change, it should consult by name when the status is 'All'
+        //Conditional could be evaluated by string length
+        if (plainText.trim().length === 0) {
+            if (status === 'ALL') {                
+                return res.json(await getCustomersForFilters (page))
+            }
+            else {
+                return res.json(await getCustomersByStatus(status, page))
+            } 
+        }
+        else if(status === 'ALL'){
+            return res.json(await getCustomersByName(plainText))
+        }
+        const customers = await prisma.customerUser.findMany({
+            take: PAGE_SIZE,
+            skip: (page - 1) * PAGE_SIZE,
+            include: {
+                subscription: true
+            },
+            where: {
+                name: {
+                    contains: plainText
+                },
+                subscription: {
+                    status
+                }
+            }
+        }) 
         res.json(customers)
     } catch (error) {
         res.status(500).json({ message: error.message })
@@ -74,8 +128,31 @@ export const getCustomerById = async (req, res) => {
     }
 }
 
-export const getCustomersByName = async (req, res) => {
-    const { name } = req.params
+export const getCustomersByStatus = async (status, page) => {
+    if(!status){
+        return res.status(401).json('Please provide a status')
+    }
+    
+    try {
+        const customers = await prisma.customerUser.findMany({
+            take: PAGE_SIZE,
+            skip: (page - 1) * PAGE_SIZE,
+            where: {
+                subscription: {
+                    status
+                }
+            },
+            include: {
+                subscription: true
+            }
+        })
+        return customers
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
+
+export const getCustomersByName = async (name) => {
 
     if (!name) {
         return res.status(401).json('Please provide a name')
@@ -84,14 +161,20 @@ export const getCustomersByName = async (req, res) => {
     try {
         const customer = await prisma.customerUser.findMany({
             where: {
-                name: name
+                name: {
+                    contains: name
+                }
+            },
+            include: {
+                subscription: true
             }
         })
-        res.json(customer)
+        return customer
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        throw new Error(error.message)
     }
 }
+
 export const updateCustomer = async (req, res) => {
     const { id } = req.params
     const { name, email } = req.body

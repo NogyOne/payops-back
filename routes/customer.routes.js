@@ -1,13 +1,13 @@
 import { Router } from 'express'
 import { prisma } from '../utils/dbConnect.js'
-import { addCustomer, getCustomers, getCustomerById, getCustomersByName, deleteCustomer } from '../controllers/customer.controller.js'
+import { addCustomer, getCustomers, getCustomerById, getCustomersByName, deleteCustomer, getCustomersByFilters, getCustomersByStatus } from '../controllers/customer.controller.js'
 
 const routes = Router()
 
 //Get all customers
+routes.get('/customers/:page/:plainText/:status', getCustomersByFilters)
 routes.get('/customers/page/:page', getCustomers)
 routes.get('/customers/:id', getCustomerById)
-routes.get('/customers/name/:name', getCustomersByName)
 
 //Post a new customer user
 routes.post('/customers', addCustomer)
