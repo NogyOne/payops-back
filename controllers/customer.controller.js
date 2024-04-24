@@ -12,8 +12,11 @@ export const getCustomers = async (req, res) => {
             skip: (page - 1) * PAGE_SIZE,
             include: {
                 subscription: true
+            },
+            orderBy: {
+                id: 'desc'
             }
-        })
+        }) 
         res.json(customers)
     } catch (error) {
         res.status(500).json({ message: error.message })
@@ -27,6 +30,9 @@ export const getCustomersForFilters = async (page) => {
             skip: (page - 1) * PAGE_SIZE,
             include: {
                 subscription: true
+            },
+            orderBy: {
+                id: 'desc'
             }
         })
         return customers
@@ -66,6 +72,9 @@ export const getCustomersByFilters = async (req, res) => {
                 subscription: {
                     status
                 }
+            },
+            orderBy: {
+                id: 'desc'
             }
         }) 
         res.json(customers)
@@ -144,6 +153,9 @@ export const getCustomersByStatus = async (status, page) => {
             },
             include: {
                 subscription: true
+            },
+            orderBy: {
+                id: 'desc'
             }
         })
         return customers
@@ -167,6 +179,9 @@ export const getCustomersByName = async (name) => {
             },
             include: {
                 subscription: true
+            },
+            orderBy: {
+                id: 'desc'
             }
         })
         return customer
