@@ -6,6 +6,10 @@ const PAGE_SIZE = 6
 export const getCustomers = async (req, res) => {
     const {page} = req.params
     
+    // if(+page === 0){
+    //     return res.status(400).json('Please provide all requiered fields')
+    // }
+
     try {
         const customers = await prisma.customerUser.findMany({
             take: PAGE_SIZE,
@@ -46,8 +50,6 @@ export const getCustomersByFilters = async (req, res) => {
     status = String(status).toUpperCase().trim()
     //Date filter could be wait to an update
     try {
-        //This conditional must to be change, it should consult by name when the status is 'All'
-        //Conditional could be evaluated by string length
         if (plainText.trim().length === 0) {
             if (status === 'ALL') {                
                 return res.json(await getCustomersForFilters (page))
@@ -86,7 +88,7 @@ export const getCustomersByFilters = async (req, res) => {
 export const addCustomer = async (req, res) => {
     const { adminUser, name, monthsPaid, email } = req.body
     if (!adminUser || !name || !email) {
-        return res.status(401).json('Please provide all requiered fields')
+        return res.status(400).json('Please provide all requiered fields')
     }
     try {
         let subscription
@@ -119,7 +121,7 @@ export const getCustomerById = async (req, res) => {
     const { id } = req.params
 
     if (!id) {
-        return res.status(401).json('Please provide an Id')
+        return res.status(400).json('Please provide an Id')
     }
 
     try {
@@ -139,7 +141,7 @@ export const getCustomerById = async (req, res) => {
 
 export const getCustomersByStatus = async (status, page) => {
     if(!status){
-        return res.status(401).json('Please provide a status')
+        return res.status(400).json('Please provide a status')
     }
     
     try {
@@ -167,7 +169,7 @@ export const getCustomersByStatus = async (status, page) => {
 export const getCustomersByName = async (name) => {
 
     if (!name) {
-        return res.status(401).json('Please provide a name')
+        return res.status(400).json('Please provide a name')
     }
 
     try {
@@ -195,7 +197,7 @@ export const updateCustomer = async (req, res) => {
     const { name, email } = req.body
 
     if (!id) {
-        return res.status(401).json('Please select a customer.')
+        return res.status(400).json('Please select a customer.')
     }
 
     try {
