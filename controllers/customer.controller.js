@@ -1,5 +1,5 @@
 import { prisma } from '../utils/dbConnect.js'
-import { addSubscription } from './subscription.controller.js'
+import { addSubscription, updateSubscription } from './subscription.controller.js'
 
 const PAGE_SIZE = 6
 
@@ -194,13 +194,28 @@ export const getCustomersByName = async (name) => {
 
 export const updateCustomer = async (req, res) => {
     const { id } = req.params
-    const { name, email } = req.body
-
+    const customer = req.body
+    const { name, email, idSub, monthsPaid } = customer
+    console.log(customer)
+    console.log(name, email, idSub, monthsPaid)
     if (!id) {
         return res.status(400).json('Please select a customer.')
     }
 
     try {
+
+        let subscription
+        if (!monthsPaid) {
+            subscription = await updateSubscription(idSub, 1)
+        }
+        else {
+            subscription = await updateSubscription(idSub, monthsPaid)
+        }
+
+        if (!subscription) {
+            return res.status(500).json({ message: 'Failed to create subscription' })
+        }
+
         const updatedCustomer = await prisma.customerUser.update({
             where: {
                 id: +id
@@ -208,6 +223,9 @@ export const updateCustomer = async (req, res) => {
             data: {
                 name,
                 email,
+            },
+            include: {
+                subscription: true
             }
         })
         res.json(updatedCustomer)
@@ -228,6 +246,9 @@ export const deleteCustomer = async (req, res) => {
             where: {
                 id: +id
             },
+            include: {
+                subscription: true
+            }
         })
         res.json(deletedCustomer)
     } catch (error) {
