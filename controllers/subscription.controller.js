@@ -52,13 +52,7 @@ export const updateSubStatus = async (req, res) => {
     }
 }
 
-export const updateSubscription = async (req, res) => {
-    const { id, monthsPaid } = req.params
-
-    if(!id){
-        return res.status(401).json({message: 'Please provide all requiered fields'})
-    }
-
+export const updateSubscription = async (id, monthsPaid) => {
     try {        
         const startDate = new Date()
         startDate.setHours(0, 0, 0, 0)
@@ -77,9 +71,10 @@ export const updateSubscription = async (req, res) => {
                 status: 'CURRENT'
             }
         })
-        res.json(updatedSubscription)
+        return updatedSubscription
+        //res.json(updatedSubscription)
     } catch (error) {
-        res.status(500).json({message: error.message})
+        throw new Error(error.message)
     }
 }
 
