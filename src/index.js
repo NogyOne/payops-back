@@ -1,9 +1,10 @@
 import express from 'express'
 import cors from 'cors'
-import adminsRoutes from '../routes/admin.routes.js'
-import customersRoutes from '../routes/customer.routes.js'
-import subscriptionRoutes from '../routes/subscription.routes.js'
-import authRoutes from '../routes/auth.routes.js'
+import adminsRoutes from './routes/admin.routes.js'
+import customersRoutes from './routes/customer.routes.js'
+import subscriptionRoutes from './routes/subscription.routes.js'
+import authRoutes from './routes/auth.routes.js'
+import emailRoutes from './routes/email.routes.js'
 
 const PORT = process.env.PORT
 
@@ -16,6 +17,7 @@ app.use(adminsRoutes)
 app.use(customersRoutes)
 app.use(subscriptionRoutes)
 app.use(authRoutes)
+app.use(emailRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
