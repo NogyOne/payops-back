@@ -6,15 +6,15 @@ export const sendEmail = async (req, res) => {
   if (!to || !subject || !html) {
     return res
       .status(400)
-      .json({ message: 'Faltan parámetros requeridos: to, subject, text' })
+      .json({ message: 'Please provide all required fields.' })
   }
-
+  console.log(to, subject, html)
   try {
     const info = await sendEmailService(to, subject, html)
-    res.status(200).json({ message: 'Correo enviado con éxito', info })
+    res.status(200).json({ message: 'Email sent succesfully.', info })
   } catch (error) {
     res
       .status(500)
-      .json({ message: 'Error al enviar el correo', error: error.message })
+      .json({ message: 'Error sending email.', error: error.message })
   }
 }

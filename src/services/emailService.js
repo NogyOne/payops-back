@@ -20,13 +20,12 @@ transporter
   })
 
 // Función para enviar correos electrónicos con parámetros
-export async function sendEmailService(to, subject, text) {
+export async function sendEmailService(to, subject, html) {
   try {
     const info = await transporter.sendMail({
       from: `"Company name" <${process.env.EMAIL_USER}>`, // dirección del remitente
       to, // lista de receptores
-      subject, // línea de asunto
-      text, // cuerpo del texto plano
+      subject, // línea de asunto// cuerpo del texto plano
       html, // cuerpo de html (opcional)
     })
 
