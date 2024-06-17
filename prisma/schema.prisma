@@ -11,32 +11,34 @@ datasource db {
 }
 
 model AdminUser {
-  id  Int @id @default(autoincrement())
-  name  String
-  username String
-  email String
-  password  String
+  id            Int            @id @default(autoincrement())
+  name          String
+  username      String
+  email         String
+  password      String
+  company       String
   customerUsers CustomerUser[]
-  createdAt DateTime @default(now())
+  createdAt     DateTime       @default(now())
 }
 
 model CustomerUser {
-  id  Int @id @default(autoincrement())
-  name String
-  email String
-  adminUserId Int
-  adminUser AdminUser @relation(fields: [adminUserId], references: [id])
-  subscriptionId Int @unique
-  subscription Subscription @relation(fields:[subscriptionId], references: [id])
+  id             Int          @id @default(autoincrement())
+  name           String
+  email          String
+  adminUserId    Int
+  adminUser      AdminUser    @relation(fields: [adminUserId], references: [id])
+  subscriptionId Int          @unique
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
 }
 
 model Subscription {
-  id  Int @id @default(autoincrement())
-  startDate DateTime @default(now())
-  endDate DateTime
-  monthsPaid Int @default(1)
-  customerUser CustomerUser?
-  status Status @default(CURRENT)
+  id               Int           @id @default(autoincrement())
+  startDate        DateTime      @default(now())
+  endDate          DateTime
+  monthsPaid       Int           @default(1)
+  customerUser     CustomerUser?
+  status           Status        @default(CURRENT)
+  emailExpiredSent Boolean       @default(false)
 }
 
 enum Status {
