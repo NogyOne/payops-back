@@ -28,7 +28,7 @@ model CustomerUser {
   adminUserId    Int
   adminUser      AdminUser    @relation(fields: [adminUserId], references: [id])
   subscriptionId Int          @unique
-  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 }
 
 model Subscription {
